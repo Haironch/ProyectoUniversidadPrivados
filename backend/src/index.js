@@ -79,4 +79,18 @@ const startServer = async () => {
   }
 };
 
+// Manejo de errores
+app.use((err, req, res, next) => {
+  console.error("Error:", err);
+
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Error interno del servidor";
+
+  res.status(statusCode).json({
+    success: false,
+    message: message,
+    ...(config.server.env === "development" && { stack: err.stack }),
+  });
+});
+
 startServer();
