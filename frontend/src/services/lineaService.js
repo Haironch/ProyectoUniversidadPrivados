@@ -56,6 +56,16 @@ export const lineaService = {
       throw error;
     }
   },
+
+  getAccesosByLinea: async (id) => {
+    try {
+      const response = await api.get(`/lineas/${id}/accesos`);
+      return response.data;
+    } catch (error) {
+      console.error("Error al obtener accesos de línea:", error);
+      throw error;
+    }
+  },
 };
 
 export default lineaService;

@@ -1,28 +1,28 @@
-// frontend/src/components/buses/BusList.jsx
+// frontend/src/components/personal/PilotoList.jsx
 import { useState, useEffect } from "react";
-import busService from "../../services/busService";
-import BusForm from "./BusForm";
+import pilotoService from "../../services/pilotoService";
+import PilotoForm from "./PilotoForm";
 
-const BusList = () => {
-  const [buses, setBuses] = useState([]);
+const PilotoList = () => {
+  const [pilotos, setPilotos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
-  const [selectedBusId, setSelectedBusId] = useState(null);
+  const [selectedPilotoId, setSelectedPilotoId] = useState(null);
 
   useEffect(() => {
-    fetchBuses();
+    fetchPilotos();
   }, []);
 
-  const fetchBuses = async () => {
+  const fetchPilotos = async () => {
     try {
       setLoading(true);
-      const response = await busService.getBuses();
-      setBuses(response.data);
+      const response = await pilotoService.getPilotos();
+      setPilotos(response.data);
       setError(null);
     } catch (err) {
       setError(
-        "Error al cargar los buses. Verifica que el backend este corriendo."
+        "Error al cargar los pilotos. Verifica que el backend este corriendo."
       );
       console.error(err);
     } finally {
@@ -30,15 +30,19 @@ const BusList = () => {
     }
   };
 
-  const handleDelete = async (id, numeroUnidad) => {
-    if (window.confirm(`¿Estas seguro de eliminar el bus ${numeroUnidad}?`)) {
+  const handleDelete = async (id, nombre, apellido) => {
+    if (
+      window.confirm(
+        `¿Estas seguro de eliminar al piloto ${nombre} ${apellido}?`
+      )
+    ) {
       try {
-        await busService.deleteBus(id);
-        alert("Bus eliminado exitosamente");
-        fetchBuses();
+        await pilotoService.deletePiloto(id);
+        alert("Piloto eliminado exitosamente");
+        fetchPilotos();
       } catch (err) {
         const errorMessage =
-          err.response?.data?.message || "Error al eliminar el bus";
+          err.response?.data?.message || "Error al eliminar el piloto";
         alert(errorMessage);
         console.error(err);
       }
@@ -46,30 +50,30 @@ const BusList = () => {
   };
 
   const handleCreate = () => {
-    setSelectedBusId(null);
+    setSelectedPilotoId(null);
     setShowForm(true);
   };
 
   const handleEdit = (id) => {
-    setSelectedBusId(id);
+    setSelectedPilotoId(id);
     setShowForm(true);
   };
 
   const handleCloseForm = () => {
     setShowForm(false);
-    setSelectedBusId(null);
+    setSelectedPilotoId(null);
   };
 
   const handleFormSuccess = () => {
-    fetchBuses();
+    fetchPilotos();
   };
 
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando buses...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando pilotos...</p>
         </div>
       </div>
     );
@@ -82,7 +86,7 @@ const BusList = () => {
           <h3 className="text-red-800 font-semibold mb-2">Error</h3>
           <p className="text-red-600">{error}</p>
           <button
-            onClick={fetchBuses}
+            onClick={fetchPilotos}
             className="mt-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
           >
             Reintentar
@@ -95,16 +99,18 @@ const BusList = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="px-6 py-4 bg-blue-600 text-white flex justify-between items-center">
+        <div className="px-6 py-4 bg-purple-600 text-white flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold">Buses de Transmetro</h1>
-            <p className="text-blue-100 mt-1">Total de buses: {buses.length}</p>
+            <h1 className="text-2xl font-bold">Pilotos de Transmetro</h1>
+            <p className="text-purple-100 mt-1">
+              Total de pilotos: {pilotos.length}
+            </p>
           </div>
           <button
             onClick={handleCreate}
-            className="bg-white text-blue-600 px-4 py-2 rounded font-semibold hover:bg-blue-50 transition"
+            className="bg-white text-purple-600 px-4 py-2 rounded font-semibold hover:bg-purple-50 transition"
           >
-            + Nuevo Bus
+            + Nuevo Piloto
           </button>
         </div>
 
@@ -113,22 +119,22 @@ const BusList = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Unidad
+                  Nombre
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Placa
+                  DPI
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Modelo
+                  Licencia
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Línea
+                  Teléfono
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Parqueo
+                  Municipio
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Capacidad
+                  Educación
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Estado
@@ -139,47 +145,64 @@ const BusList = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {buses.map((bus) => (
-                <tr key={bus.id_bus} className="hover:bg-gray-50 transition">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {bus.numero_unidad}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {bus.placa}
+              {pilotos.map((piloto) => (
+                <tr
+                  key={piloto.id_piloto}
+                  className="hover:bg-gray-50 transition"
+                >
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">
+                      {piloto.nombre} {piloto.apellido}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {piloto.email || "Sin email"}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {bus.modelo || "N/A"}
+                    {piloto.dpi}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">
+                      {piloto.licencia}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      Tipo {piloto.tipo_licencia}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {bus.linea_nombre ? (
-                      <span className="text-blue-600 font-medium">
-                        {bus.linea_codigo} - {bus.linea_nombre}
+                    {piloto.telefono}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {piloto.municipio_residencia}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {piloto.registros_educativos > 0 ? (
+                      <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">
+                        {piloto.registros_educativos} registro(s)
                       </span>
                     ) : (
-                      <span className="text-gray-400">Sin asignar</span>
+                      <span className="text-gray-400">Sin registros</span>
                     )}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
-                    {bus.parqueo_nombre || "N/A"}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {bus.capacidad_maxima}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                        bus.estado === "activo"
+                        piloto.estado === "activo"
                           ? "bg-green-100 text-green-800"
-                          : bus.estado === "fuera_servicio"
+                          : piloto.estado === "inactivo"
+                          ? "bg-gray-100 text-gray-800"
+                          : piloto.estado === "suspendido"
                           ? "bg-red-100 text-red-800"
                           : "bg-yellow-100 text-yellow-800"
                       }`}
                     >
-                      {bus.estado === "activo"
+                      {piloto.estado === "activo"
                         ? "Activo"
-                        : bus.estado === "fuera_servicio"
-                        ? "Fuera de Servicio"
-                        : "Mantenimiento"}
+                        : piloto.estado === "inactivo"
+                        ? "Inactivo"
+                        : piloto.estado === "suspendido"
+                        ? "Suspendido"
+                        : "Vacaciones"}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
@@ -187,14 +210,18 @@ const BusList = () => {
                       Ver
                     </button>
                     <button
-                      onClick={() => handleEdit(bus.id_bus)}
+                      onClick={() => handleEdit(piloto.id_piloto)}
                       className="text-green-600 hover:text-green-900"
                     >
                       Editar
                     </button>
                     <button
                       onClick={() =>
-                        handleDelete(bus.id_bus, bus.numero_unidad)
+                        handleDelete(
+                          piloto.id_piloto,
+                          piloto.nombre,
+                          piloto.apellido
+                        )
                       }
                       className="text-red-600 hover:text-red-900"
                     >
@@ -209,8 +236,8 @@ const BusList = () => {
       </div>
 
       {showForm && (
-        <BusForm
-          busId={selectedBusId}
+        <PilotoForm
+          pilotoId={selectedPilotoId}
           onClose={handleCloseForm}
           onSuccess={handleFormSuccess}
         />
@@ -219,4 +246,4 @@ const BusList = () => {
   );
 };
 
-export default BusList;
+export default PilotoList;

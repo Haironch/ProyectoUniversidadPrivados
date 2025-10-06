@@ -6,12 +6,16 @@ import {
   createLinea,
   updateLinea,
   deleteLinea,
+  getAccesosByLinea,
 } from "../controllers/lineaController.js";
 
 const router = express.Router();
 
 // GET /api/lineas - Obtener todas las lineas
 router.get("/", getLineas);
+
+// GET /api/lineas/:id/accesos - DEBE IR ANTES DE /:id
+router.get("/:id/accesos", getAccesosByLinea);
 
 // GET /api/lineas/:id - Obtener una linea por ID
 router.get("/:id", getLineaById);
