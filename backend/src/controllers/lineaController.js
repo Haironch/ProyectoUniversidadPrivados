@@ -227,30 +227,32 @@ export const getAccesosByLinea = async (req, res) => {
     const { id } = req.params;
 
     const sql = `
-      SELECT 
-        l.id_linea,
-        l.nombre as linea_nombre,
-        l.codigo as linea_codigo,
-        e.id_estacion,
-        e.nombre as estacion_nombre,
-        e.codigo as estacion_codigo,
-        le.orden_secuencia,
-        a.id_acceso,
-        a.nombre as acceso_nombre,
-        a.tipo as acceso_tipo,
-        a.esta_activo,
-        a.hora_apertura,
-        a.hora_cierre,
-        COUNT(g.id_guardia) as guardias_asignados
-      FROM linea l
-      INNER JOIN linea_estacion le ON l.id_linea = le.id_linea
-      INNER JOIN estacion e ON le.id_estacion = e.id_estacion
-      INNER JOIN acceso a ON e.id_estacion = a.id_estacion
-      LEFT JOIN guardia g ON a.id_acceso = g.id_acceso
-      WHERE l.id_linea = ?
-      GROUP BY a.id_acceso
-      ORDER BY le.orden_secuencia, a.tipo, a.nombre
-    `;
+  SELECT 
+    l.id_linea,
+    l.nombre as linea_nombre,
+    l.codigo as linea_codigo,
+    e.id_estacion,
+    e.nombre as estacion_nombre,
+    e.codigo as estacion_codigo,
+    le.orden_secuencia,
+    a.id_acceso,
+    a.nombre as acceso_nombre,
+    a.tipo as acceso_tipo,
+    a.esta_activo,
+    a.hora_apertura,
+    a.hora_cierre,
+    COUNT(g.id_guardia) as guardias_asignados
+  FROM linea l
+  INNER JOIN linea_estacion le ON l.id_linea = le.id_linea
+  INNER JOIN estacion e ON le.id_estacion = e.id_estacion
+  INNER JOIN acceso a ON e.id_estacion = a.id_estacion
+  LEFT JOIN guardia g ON a.id_acceso = g.id_acceso
+  WHERE l.id_linea = ?
+  GROUP BY l.id_linea, l.nombre, l.codigo, e.id_estacion, e.nombre, 
+           e.codigo, le.orden_secuencia, a.id_acceso, a.nombre, 
+           a.tipo, a.esta_activo, a.hora_apertura, a.hora_cierre
+  ORDER BY le.orden_secuencia, a.tipo, a.nombre
+`;
 
     const results = await query(sql, [id]);
 
