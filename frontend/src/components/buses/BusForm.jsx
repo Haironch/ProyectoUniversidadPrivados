@@ -87,24 +87,31 @@ const BusForm = ({ busId, onClose, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-        <div className="px-6 py-4 bg-blue-600 text-white rounded-t-lg">
-          <h2 className="text-xl font-bold">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="px-4 sm:px-6 py-3 sm:py-4 bg-blue-600 text-white rounded-t-lg sticky top-0 z-10">
+          <h2 className="text-lg sm:text-xl font-bold">
             {busId ? "Editar Bus" : "Nuevo Bus"}
           </h2>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        {/* Form */}
+        <form
+          onSubmit={handleSubmit}
+          className="p-4 sm:p-6 space-y-3 sm:space-y-4"
+        >
+          {/* Error Message */}
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+            <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 sm:px-4 sm:py-3 rounded text-sm">
               {error}
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-4">
+          {/* Número de Unidad y Placa - 1 columna en móvil, 2 en desktop */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
                 Número de Unidad *
               </label>
               <input
@@ -113,13 +120,13 @@ const BusForm = ({ busId, onClose, onSuccess }) => {
                 value={formData.numero_unidad}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Ej: BUS-001"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
                 Placa *
               </label>
               <input
@@ -128,15 +135,16 @@ const BusForm = ({ busId, onClose, onSuccess }) => {
                 value={formData.placa}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Ej: P-123ABC"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          {/* Modelo y Año */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
                 Modelo
               </label>
               <input
@@ -144,13 +152,13 @@ const BusForm = ({ busId, onClose, onSuccess }) => {
                 name="modelo"
                 value={formData.modelo}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Ej: Volvo B7RLE"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
                 Año
               </label>
               <input
@@ -158,14 +166,15 @@ const BusForm = ({ busId, onClose, onSuccess }) => {
                 name="anio"
                 value={formData.anio}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="2024"
               />
             </div>
           </div>
 
+          {/* Capacidad */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
               Capacidad de Pasajeros *
             </label>
             <input
@@ -174,12 +183,13 @@ const BusForm = ({ busId, onClose, onSuccess }) => {
               value={formData.capacidad_maxima}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
+          {/* Parqueo */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
               Parqueo Asignado *
             </label>
             <select
@@ -187,7 +197,7 @@ const BusForm = ({ busId, onClose, onSuccess }) => {
               value={formData.id_parqueo}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Seleccionar parqueo</option>
               {parqueos.map((p) => (
@@ -201,15 +211,16 @@ const BusForm = ({ busId, onClose, onSuccess }) => {
             </p>
           </div>
 
+          {/* Línea */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
               Línea Asignada (opcional)
             </label>
             <select
               name="id_linea"
               value={formData.id_linea}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Sin asignar</option>
               {lineas.map((l) => (
@@ -220,15 +231,16 @@ const BusForm = ({ busId, onClose, onSuccess }) => {
             </select>
           </div>
 
+          {/* Estado */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
               Estado
             </label>
             <select
               name="estado"
               value={formData.estado}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="activo">Activo</option>
               <option value="mantenimiento">Mantenimiento</option>
@@ -236,20 +248,21 @@ const BusForm = ({ busId, onClose, onSuccess }) => {
             </select>
           </div>
 
-          <div className="flex space-x-3 pt-4">
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-400 transition"
-            >
-              {loading ? "Guardando..." : busId ? "Actualizar" : "Crear"}
-            </button>
+          {/* Botones - Stack en móvil, lado a lado en desktop */}
+          <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 pt-2 sm:pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 transition"
+              className="w-full sm:flex-1 bg-gray-300 text-gray-700 py-2.5 sm:py-2 px-4 rounded-md hover:bg-gray-400 transition text-sm sm:text-base font-medium"
             >
               Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full sm:flex-1 bg-blue-600 text-white py-2.5 sm:py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-400 transition text-sm sm:text-base font-medium"
+            >
+              {loading ? "Guardando..." : busId ? "Actualizar" : "Crear"}
             </button>
           </div>
         </form>

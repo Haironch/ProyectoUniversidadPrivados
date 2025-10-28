@@ -66,10 +66,12 @@ const BusList = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex justify-center items-center min-h-screen px-4">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando buses...</p>
+          <p className="text-gray-600 text-sm sm:text-base">
+            Cargando buses...
+          </p>
         </div>
       </div>
     );
@@ -77,13 +79,15 @@ const BusList = () => {
 
   if (error) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md">
-          <h3 className="text-red-800 font-semibold mb-2">Error</h3>
-          <p className="text-red-600">{error}</p>
+      <div className="flex justify-center items-center min-h-screen px-4">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 sm:p-6 max-w-md w-full">
+          <h3 className="text-red-800 font-semibold mb-2 text-sm sm:text-base">
+            Error
+          </h3>
+          <p className="text-red-600 text-sm">{error}</p>
           <button
             onClick={fetchBuses}
-            className="mt-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
+            className="mt-4 w-full sm:w-auto bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition text-sm"
           >
             Reintentar
           </button>
@@ -93,22 +97,30 @@ const BusList = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-4 sm:py-8">
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="px-6 py-4 bg-blue-600 text-white flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold">Buses de Transmetro</h1>
-            <p className="text-blue-100 mt-1">Total de buses: {buses.length}</p>
+        {/* Header */}
+        <div className="px-4 sm:px-6 py-3 sm:py-4 bg-blue-600 text-white">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold">
+                Buses de Transmetro
+              </h1>
+              <p className="text-blue-100 mt-1 text-sm">
+                Total de buses: {buses.length}
+              </p>
+            </div>
+            <button
+              onClick={handleCreate}
+              className="bg-white text-blue-600 px-4 py-2 rounded font-semibold hover:bg-blue-50 transition text-sm sm:text-base w-full sm:w-auto"
+            >
+              + Nuevo Bus
+            </button>
           </div>
-          <button
-            onClick={handleCreate}
-            className="bg-white text-blue-600 px-4 py-2 rounded font-semibold hover:bg-blue-50 transition"
-          >
-            + Nuevo Bus
-          </button>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* Vista Desktop - Tabla */}
+        <div className="hidden lg:block overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -206,6 +218,122 @@ const BusList = () => {
             </tbody>
           </table>
         </div>
+
+        {/* Vista Móvil - Cards */}
+        <div className="lg:hidden divide-y divide-gray-200">
+          {buses.map((bus) => (
+            <div key={bus.id_bus} className="p-4 hover:bg-gray-50 transition">
+              {/* Header de la Card */}
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex-1">
+                  <h3 className="font-bold text-gray-900 text-base">
+                    {bus.numero_unidad}
+                  </h3>
+                  <p className="text-sm text-gray-600">{bus.placa}</p>
+                </div>
+                <span
+                  className={`px-2 py-1 rounded-full text-xs font-semibold whitespace-nowrap ml-2 ${
+                    bus.estado === "activo"
+                      ? "bg-green-100 text-green-800"
+                      : bus.estado === "fuera_servicio"
+                      ? "bg-red-100 text-red-800"
+                      : "bg-yellow-100 text-yellow-800"
+                  }`}
+                >
+                  {bus.estado === "activo"
+                    ? "Activo"
+                    : bus.estado === "fuera_servicio"
+                    ? "Fuera"
+                    : "Mant."}
+                </span>
+              </div>
+
+              {/* Detalles */}
+              <div className="space-y-2 mb-3">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Modelo:</span>
+                  <span className="text-gray-900 font-medium">
+                    {bus.modelo || "N/A"}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Línea:</span>
+                  {bus.linea_nombre ? (
+                    <span className="text-blue-600 font-medium">
+                      {bus.linea_codigo}
+                    </span>
+                  ) : (
+                    <span className="text-gray-400">Sin asignar</span>
+                  )}
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Parqueo:</span>
+                  <span className="text-gray-900 truncate max-w-[180px]">
+                    {bus.parqueo_nombre || "N/A"}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Capacidad:</span>
+                  <span className="text-gray-900 font-medium">
+                    {bus.capacidad_maxima}
+                  </span>
+                </div>
+              </div>
+
+              {/* Botones de Acción */}
+              <div className="flex gap-2">
+                <button className="flex-1 bg-blue-50 text-blue-600 px-3 py-2 rounded text-sm font-medium hover:bg-blue-100 transition">
+                  Ver
+                </button>
+                <button
+                  onClick={() => handleEdit(bus.id_bus)}
+                  className="flex-1 bg-green-50 text-green-600 px-3 py-2 rounded text-sm font-medium hover:bg-green-100 transition"
+                >
+                  Editar
+                </button>
+                <button
+                  onClick={() => handleDelete(bus.id_bus, bus.numero_unidad)}
+                  className="flex-1 bg-red-50 text-red-600 px-3 py-2 rounded text-sm font-medium hover:bg-red-100 transition"
+                >
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Mensaje si no hay buses */}
+        {buses.length === 0 && (
+          <div className="text-center py-12 px-4">
+            <svg
+              className="mx-auto h-12 w-12 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">
+              No hay buses
+            </h3>
+            <p className="mt-1 text-sm text-gray-500">
+              Comienza creando un nuevo bus.
+            </p>
+            <div className="mt-6">
+              <button
+                onClick={handleCreate}
+                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+              >
+                + Nuevo Bus
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {showForm && (
