@@ -58,7 +58,7 @@ const alertaService = {
 
   atenderAlerta: async (id, idOperador) => {
     try {
-      const response = await api.put(`/alertas/${id}/atender`, {
+      const response = await api.patch(`/alertas/${id}/atender`, {
         id_operador: idOperador,
       });
       return response.data;
@@ -70,7 +70,7 @@ const alertaService = {
 
   resolverAlerta: async (id, idOperador) => {
     try {
-      const response = await api.put(`/alertas/${id}/resolver`, {
+      const response = await api.patch(`/alertas/${id}/resolver`, {
         id_operador: idOperador,
       });
       return response.data;
@@ -82,7 +82,7 @@ const alertaService = {
 
   cancelarAlerta: async (id) => {
     try {
-      const response = await api.put(`/alertas/${id}/cancelar`);
+      const response = await api.patch(`/alertas/${id}/cancelar`);
       return response.data;
     } catch (error) {
       console.error("Error al cancelar alerta:", error);

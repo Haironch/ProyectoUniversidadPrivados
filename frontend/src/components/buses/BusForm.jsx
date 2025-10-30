@@ -13,7 +13,7 @@ const BusForm = ({ busId, onClose, onSuccess }) => {
     capacidad_maxima: "150",
     id_parqueo: "",
     id_linea: "",
-    estado: "activo",
+    estado: "operativo", // ← CAMBIADO: activo → operativo
   });
 
   const [lineas, setLineas] = useState([]);
@@ -242,7 +242,7 @@ const BusForm = ({ busId, onClose, onSuccess }) => {
               onChange={handleChange}
               className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="activo">Activo</option>
+              <option value="operativo">Operativo</option> {/* ← CAMBIADO */}
               <option value="mantenimiento">Mantenimiento</option>
               <option value="fuera_servicio">Fuera de Servicio</option>
             </select>

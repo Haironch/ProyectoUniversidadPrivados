@@ -56,6 +56,34 @@ export const estacionService = {
       throw error;
     }
   },
+
+  // ============================================
+  // NUEVAS FUNCIONES - SISTEMA DE ALERTAS
+  // ============================================
+
+  // Registrar conteo de pasajeros (genera alerta automática si supera umbral)
+  registrarConteo: async (id, pasajeros_actuales) => {
+    try {
+      const response = await api.post(`/estaciones/${id}/conteo`, {
+        pasajeros_actuales,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error al registrar conteo:", error);
+      throw error;
+    }
+  },
+
+  // Obtener buses disponibles en una estación (filtrados por línea)
+  getBusesDisponibles: async (id) => {
+    try {
+      const response = await api.get(`/estaciones/${id}/buses-disponibles`);
+      return response.data;
+    } catch (error) {
+      console.error("Error al obtener buses disponibles:", error);
+      throw error;
+    }
+  },
 };
 
 export default estacionService;

@@ -1,7 +1,6 @@
 // backend/src/controllers/busController.js
 import { query } from "../config/database.js";
 
-// Obtener todos los buses con sus pilotos asignados (YA EXISTENTE)
 export const getBusesConPilotos = async (req, res) => {
   try {
     const sql = `
@@ -34,11 +33,6 @@ export const getBusesConPilotos = async (req, res) => {
   }
 };
 
-// ============================================
-// NUEVAS FUNCIONES - CRUD COMPLETO DE BUSES
-// ============================================
-
-// Obtener todos los buses
 export const getBuses = async (req, res) => {
   try {
     const sql = `
@@ -71,7 +65,6 @@ export const getBuses = async (req, res) => {
   }
 };
 
-// Obtener un bus por ID
 export const getBusById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -112,7 +105,6 @@ export const getBusById = async (req, res) => {
   }
 };
 
-// Crear nuevo bus
 export const createBus = async (req, res) => {
   try {
     const {
@@ -126,7 +118,6 @@ export const createBus = async (req, res) => {
       estado,
     } = req.body;
 
-    // Validaciones obligatorias
     if (!numero_unidad || !placa || !capacidad_maxima || !id_parqueo) {
       return res.status(400).json({
         success: false,
@@ -135,7 +126,6 @@ export const createBus = async (req, res) => {
       });
     }
 
-    // PUNTO 7: Validar que el parqueo existe
     const parqueoExists = await query(
       "SELECT id_parqueo FROM parqueo WHERE id_parqueo = ?",
       [id_parqueo]
@@ -148,7 +138,6 @@ export const createBus = async (req, res) => {
       });
     }
 
-    // PUNTO 4 y 5: Si se asigna a una línea, validar restricciones
     if (id_linea) {
       const lineaExists = await query(
         "SELECT id_linea, numero_estaciones, min_buses_requeridos, max_buses_permitidos FROM linea WHERE id_linea = ?",
@@ -162,7 +151,6 @@ export const createBus = async (req, res) => {
         });
       }
 
-      // PUNTO 5: Validar que no se exceda el máximo de buses permitidos
       const busesEnLinea = await query(
         "SELECT COUNT(*) as total FROM bus WHERE id_linea = ?",
         [id_linea]
@@ -212,7 +200,6 @@ export const createBus = async (req, res) => {
   }
 };
 
-// Actualizar bus
 export const updateBus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -227,7 +214,6 @@ export const updateBus = async (req, res) => {
       estado,
     } = req.body;
 
-    // Verificar que el bus existe
     const busExists = await query("SELECT id_linea FROM bus WHERE id_bus = ?", [
       id,
     ]);
@@ -239,7 +225,6 @@ export const updateBus = async (req, res) => {
       });
     }
 
-    // PUNTO 7: Si se cambia el parqueo, validar que existe
     if (id_parqueo !== undefined) {
       const parqueoExists = await query(
         "SELECT id_parqueo FROM parqueo WHERE id_parqueo = ?",
@@ -254,7 +239,6 @@ export const updateBus = async (req, res) => {
       }
     }
 
-    // PUNTO 4 y 5: Si se cambia la línea, validar restricciones
     if (id_linea !== undefined && id_linea !== null) {
       const lineaExists = await query(
         "SELECT id_linea, max_buses_permitidos FROM linea WHERE id_linea = ?",
@@ -270,7 +254,6 @@ export const updateBus = async (req, res) => {
 
       const lineaActual = busExists[0].id_linea;
 
-      // Solo validar si se está cambiando a una línea diferente
       if (id_linea !== lineaActual) {
         const busesEnNuevaLinea = await query(
           "SELECT COUNT(*) as total FROM bus WHERE id_linea = ?",
@@ -328,20 +311,57 @@ export const updateBus = async (req, res) => {
   }
 };
 
-// Eliminar bus
 export const deleteBus = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const sql = "DELETE FROM bus WHERE id_bus = ?";
-    const result = await query(sql, [id]);
+    const busExists = await query(
+      "SELECT numero_unidad FROM bus WHERE id_bus = ?",
+      [id]
+    );
 
-    if (result.affectedRows === 0) {
+    if (busExists.length === 0) {
       return res.status(404).json({
         success: false,
         message: "Bus no encontrado",
       });
     }
+
+    const checkDependencies = `
+      SELECT 
+        (SELECT COUNT(*) FROM alerta WHERE id_bus = ?) as alertas,
+        (SELECT COUNT(*) FROM piloto_bus WHERE id_bus = ?) as pilotos,
+        (SELECT COUNT(*) FROM recorrido WHERE id_bus = ?) as recorridos
+    `;
+
+    const [dependencies] = await query(checkDependencies, [id, id, id]);
+    const { alertas, pilotos, recorridos } = dependencies;
+    const total = alertas + pilotos + recorridos;
+
+    if (total > 0) {
+      const detalles = [];
+      if (alertas > 0) detalles.push(`${alertas} alerta(s)`);
+      if (pilotos > 0) detalles.push(`${pilotos} piloto(s) asignado(s)`);
+      if (recorridos > 0)
+        detalles.push(`${recorridos} recorrido(s) histórico(s)`);
+
+      return res.status(400).json({
+        success: false,
+        message:
+          "No se puede eliminar este bus porque tiene registros asociados",
+        dependencies: {
+          alertas,
+          pilotos,
+          recorridos,
+          total,
+          detalles,
+        },
+        suggestion: "Puedes desactivar el bus en lugar de eliminarlo",
+      });
+    }
+
+    const sql = "DELETE FROM bus WHERE id_bus = ?";
+    await query(sql, [id]);
 
     res.status(200).json({
       success: true,
@@ -357,7 +377,39 @@ export const deleteBus = async (req, res) => {
   }
 };
 
-// Asignar bus a línea
+export const desactivarBus = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const sql = `
+      UPDATE bus 
+      SET estado = 'fuera_servicio' 
+      WHERE id_bus = ?
+    `;
+    const result = await query(sql, [id]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Bus no encontrado",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message:
+        "Bus desactivado exitosamente. Ya no aparecerá en operaciones activas.",
+    });
+  } catch (error) {
+    console.error("Error al desactivar bus:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al desactivar bus",
+      error: error.message,
+    });
+  }
+};
+
 export const asignarBusALinea = async (req, res) => {
   try {
     const { id } = req.params;
@@ -370,7 +422,6 @@ export const asignarBusALinea = async (req, res) => {
       });
     }
 
-    // Validar que la línea existe
     const lineaExists = await query(
       "SELECT id_linea, max_buses_permitidos FROM linea WHERE id_linea = ?",
       [id_linea]
@@ -383,7 +434,6 @@ export const asignarBusALinea = async (req, res) => {
       });
     }
 
-    // Validar límite de buses (PUNTO 5)
     const busesEnLinea = await query(
       "SELECT COUNT(*) as total FROM bus WHERE id_linea = ?",
       [id_linea]
@@ -416,7 +466,6 @@ export const asignarBusALinea = async (req, res) => {
   }
 };
 
-// Cambiar parqueo de bus (PUNTO 7)
 export const cambiarParqueoBus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -425,12 +474,10 @@ export const cambiarParqueoBus = async (req, res) => {
     if (!id_parqueo) {
       return res.status(400).json({
         success: false,
-        message:
-          "Se requiere id_parqueo. Un bus no puede quedarse sin parqueo (Punto 7)",
+        message: "Se requiere id_parqueo. Un bus no puede quedarse sin parqueo",
       });
     }
 
-    // Validar que el parqueo existe
     const parqueoExists = await query(
       "SELECT id_parqueo FROM parqueo WHERE id_parqueo = ?",
       [id_parqueo]
@@ -460,7 +507,6 @@ export const cambiarParqueoBus = async (req, res) => {
   }
 };
 
-// Obtener buses de una línea
 export const getBusesByLinea = async (req, res) => {
   try {
     const { id_linea } = req.params;
@@ -500,6 +546,7 @@ export default {
   createBus,
   updateBus,
   deleteBus,
+  desactivarBus,
   asignarBusALinea,
   cambiarParqueoBus,
   getBusesByLinea,

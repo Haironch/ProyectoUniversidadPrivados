@@ -4,7 +4,7 @@ import cors from "cors";
 import { config, validateEnv } from "./config/environment.js";
 import { testConnection } from "./config/database.js";
 import routes from "./routes/index.js";
-
+import reporteRoutes from "./routes/reporteRoutes.js";
 // Validar variables de entorno
 validateEnv();
 
@@ -92,5 +92,7 @@ app.use((err, req, res, next) => {
     ...(config.server.env === "development" && { stack: err.stack }),
   });
 });
+
+app.use("/api/reportes", reporteRoutes);
 
 startServer();

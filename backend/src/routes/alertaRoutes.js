@@ -13,28 +13,20 @@ import {
 
 const router = express.Router();
 
-// GET /api/alertas - Obtener todas las alertas (con filtros opcionales)
 router.get("/", getAlertas);
 
-// GET /api/alertas/activas - Obtener alertas activas
 router.get("/activas", getAlertasActivas);
 
-// GET /api/alertas/estadisticas - Obtener estadísticas de alertas
 router.get("/estadisticas", getEstadisticasAlertas);
 
-// GET /api/alertas/:id - Obtener una alerta por ID
 router.get("/:id", getAlertaById);
 
-// POST /api/alertas - Crear nueva alerta
 router.post("/", createAlerta);
 
-// PUT /api/alertas/:id/atender - Marcar alerta como en atención
-router.put("/:id/atender", atenderAlerta);
+router.patch("/:id/atender", atenderAlerta);
 
-// PUT /api/alertas/:id/resolver - Resolver alerta
-router.put("/:id/resolver", resolverAlerta);
+router.patch("/:id/resolver", resolverAlerta);
 
-// PUT /api/alertas/:id/cancelar - Cancelar alerta
-router.put("/:id/cancelar", cancelarAlerta);
+router.patch("/:id/cancelar", cancelarAlerta);
 
 export default router;

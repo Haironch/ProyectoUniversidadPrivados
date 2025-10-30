@@ -6,6 +6,8 @@ import {
   createEstacion,
   updateEstacion,
   deleteEstacion,
+  registrarConteo,
+  getBusesDisponibles,
 } from "../controllers/estacionController.js";
 
 const router = express.Router();
@@ -24,5 +26,8 @@ router.put("/:id", updateEstacion);
 
 // DELETE /api/estaciones/:id - Eliminar estacion
 router.delete("/:id", deleteEstacion);
+
+router.post("/:id/conteo", registrarConteo);
+router.get("/:id/buses-disponibles", getBusesDisponibles);
 
 export default router;

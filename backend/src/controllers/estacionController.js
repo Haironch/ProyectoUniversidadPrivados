@@ -224,10 +224,156 @@ export const deleteEstacion = async (req, res) => {
   }
 };
 
+// Registrar conteo de pasajeros y generar alerta automática (PUNTO 14)
+export const registrarConteo = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { pasajeros_actuales } = req.body;
+
+    // Validación
+    if (!pasajeros_actuales || pasajeros_actuales < 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Se requiere un número válido de pasajeros",
+      });
+    }
+
+    // Verificar que la estación existe y obtener su capacidad
+    const estacionSql = `
+      SELECT id_estacion, nombre, capacidad_maxima 
+      FROM estacion 
+      WHERE id_estacion = ?
+    `;
+    const estacion = await query(estacionSql, [id]);
+
+    if (estacion.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Estación no encontrada",
+      });
+    }
+
+    const { nombre, capacidad_maxima } = estacion[0];
+
+    // Actualizar pasajeros actuales en la estación
+    const updateSql = `
+      UPDATE estacion 
+      SET pasajeros_actuales = ? 
+      WHERE id_estacion = ?
+    `;
+    await query(updateSql, [pasajeros_actuales, id]);
+
+    // Calcular umbral (150% de capacidad según PUNTO 14)
+    const umbral = capacidad_maxima * 1.5;
+    let alertaGenerada = null;
+
+    // VALIDACIÓN AUTOMÁTICA: ¿Se superó el umbral?
+    if (pasajeros_actuales >= umbral) {
+      // Determinar prioridad
+      let prioridad = "alta";
+      if (pasajeros_actuales >= capacidad_maxima * 2) {
+        prioridad = "critica";
+      }
+
+      // Crear alerta automáticamente
+      const alertaSql = `
+        INSERT INTO alerta 
+        (id_estacion, tipo_alerta, descripcion, prioridad, estado)
+        VALUES (?, ?, ?, ?, 'pendiente')
+      `;
+
+      const descripcion = `Capacidad excedida en estación ${nombre}. Pasajeros actuales: ${pasajeros_actuales}, Capacidad máxima: ${capacidad_maxima} (${Math.round(
+        (pasajeros_actuales / capacidad_maxima) * 100
+      )}% de ocupación)`;
+
+      const resultAlerta = await query(alertaSql, [
+        id,
+        "capacidad_excedida",
+        descripcion,
+        prioridad,
+      ]);
+
+      alertaGenerada = {
+        id_alerta: resultAlerta.insertId,
+        tipo: "capacidad_excedida",
+        prioridad,
+        descripcion,
+      };
+    }
+
+    // Respuesta
+    res.status(200).json({
+      success: true,
+      message: alertaGenerada
+        ? "Conteo registrado y alerta generada automáticamente"
+        : "Conteo registrado correctamente",
+      data: {
+        estacion: nombre,
+        pasajeros_actuales,
+        capacidad_maxima,
+        porcentaje_ocupacion: Math.round(
+          (pasajeros_actuales / capacidad_maxima) * 100
+        ),
+        umbral_alerta: umbral,
+        alerta_generada: alertaGenerada,
+      },
+    });
+  } catch (error) {
+    console.error("Error al registrar conteo:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al registrar conteo de pasajeros",
+      error: error.message,
+    });
+  }
+};
+
+// Obtener buses disponibles en una estación (filtrados por línea)
+export const getBusesDisponibles = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const sql = `
+      SELECT DISTINCT
+        b.id_bus,
+        b.numero_unidad,
+        b.placa,
+        b.capacidad_maxima,
+        b.pasajeros_actuales,
+        b.estado,
+        l.nombre as linea_nombre,
+        l.codigo as linea_codigo
+      FROM bus b
+      INNER JOIN linea l ON b.id_linea = l.id_linea
+      INNER JOIN linea_estacion le ON l.id_linea = le.id_linea
+      WHERE le.id_estacion = ? 
+        AND b.estado = 'operativo'
+      ORDER BY b.numero_unidad
+    `;
+
+    const results = await query(sql, [id]);
+
+    res.status(200).json({
+      success: true,
+      count: results.length,
+      data: results,
+    });
+  } catch (error) {
+    console.error("Error al obtener buses disponibles:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al obtener buses disponibles",
+      error: error.message,
+    });
+  }
+};
+
 export default {
   getEstaciones,
   getEstacionById,
   createEstacion,
   updateEstacion,
   deleteEstacion,
+  registrarConteo,
+  getBusesDisponibles,
 };

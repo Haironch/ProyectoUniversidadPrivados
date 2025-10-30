@@ -2,7 +2,6 @@
 import api from "./api";
 
 export const busService = {
-  // Obtener todos los buses con sus pilotos (YA EXISTENTE)
   getBusesConPilotos: async () => {
     try {
       const response = await api.get("/buses/pilotos");
@@ -13,7 +12,6 @@ export const busService = {
     }
   },
 
-  // NUEVAS FUNCIONES
   getBuses: async () => {
     try {
       const response = await api.get("/buses");
@@ -94,6 +92,16 @@ export const busService = {
       return response.data;
     } catch (error) {
       console.error("Error al eliminar bus:", error);
+      throw error;
+    }
+  },
+
+  desactivarBus: async (id) => {
+    try {
+      const response = await api.patch(`/buses/${id}/desactivar`);
+      return response.data;
+    } catch (error) {
+      console.error("Error al desactivar bus:", error);
       throw error;
     }
   },

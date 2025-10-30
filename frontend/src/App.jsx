@@ -11,7 +11,10 @@ import DistanciasPage from "./pages/lineas/DistanciasPage";
 import AlertasPage from "./pages/alertas/AlertasPage";
 import AccesosLineaPage from "./pages/lineas/AccesosLineaPage";
 import LoginPage from "./pages/auth/LoginPage";
+import RegistrarConteoPage from "./pages/operador/RegistrarConteoPage"; // ← NUEVO
 import logo from "./assets/images/proyecto.png";
+import GenerarAlertaPage from "./pages/alertas/GenerarAlertaPage";
+import ReportesPage from "./pages/reportes/ReportesPage";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -235,6 +238,39 @@ function App() {
                 >
                   Accesos/Línea
                 </button>
+
+                <button
+                  onClick={() => setCurrentPage("registrar-conteo")}
+                  className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
+                    currentPage === "registrar-conteo"
+                      ? "bg-white text-blue-600 shadow-md"
+                      : "hover:bg-blue-500"
+                  }`}
+                >
+                  Conteo
+                </button>
+
+                <button
+                  onClick={() => setCurrentPage("generar-alerta")}
+                  className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
+                    currentPage === "generar-alerta"
+                      ? "bg-white text-blue-600 shadow-md"
+                      : "hover:bg-blue-500"
+                  }`}
+                >
+                  Nueva Alerta
+                </button>
+
+                <button
+                  onClick={() => setCurrentPage("reportes")}
+                  className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
+                    currentPage === "reportes"
+                      ? "bg-white text-blue-600 shadow-md"
+                      : "hover:bg-blue-500"
+                  }`}
+                >
+                  Reportes
+                </button>
               </div>
             </div>
           </div>
@@ -252,6 +288,9 @@ function App() {
         {currentPage === "distancias" && <DistanciasPage />}
         {currentPage === "alertas" && <AlertasPage />}
         {currentPage === "accesos-linea" && <AccesosLineaPage />}
+        {currentPage === "registrar-conteo" && <RegistrarConteoPage />}
+        {currentPage === "generar-alerta" && <GenerarAlertaPage />}
+        {currentPage === "reportes" && <ReportesPage />}
       </main>
 
       <style>{`
