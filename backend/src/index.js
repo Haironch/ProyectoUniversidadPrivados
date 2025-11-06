@@ -5,6 +5,7 @@ import { config, validateEnv } from "./config/environment.js";
 import { testConnection } from "./config/database.js";
 import routes from "./routes/index.js";
 import reporteRoutes from "./routes/reporteRoutes.js";
+
 // Validar variables de entorno
 validateEnv();
 
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Rutas
 app.use("/api", routes);
+app.use("/api/reportes", reporteRoutes);
 
 // Ruta raiz
 app.get("/", (req, res) => {
@@ -32,11 +34,12 @@ app.get("/", (req, res) => {
     endpoints: {
       health: "/api/health",
       buses: "/api/buses/pilotos",
+      reportes: "/api/reportes/lineas-completo",
     },
   });
 });
 
-// Manejo de rutas no encontradas
+// Manejo de rutas no encontradas (DEBE IR AL FINAL)
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -47,10 +50,12 @@ app.use((req, res) => {
 // Manejo de errores
 app.use((err, req, res, next) => {
   console.error("Error:", err);
-  res.status(500).json({
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Error interno del servidor";
+  res.status(statusCode).json({
     success: false,
-    message: "Error interno del servidor",
-    error: config.server.env === "development" ? err.message : undefined,
+    message: message,
+    ...(config.server.env === "development" && { stack: err.stack }),
   });
 });
 
@@ -61,7 +66,6 @@ const startServer = async () => {
   try {
     // Probar conexion a la base de datos
     const dbConnected = await testConnection();
-
     if (!dbConnected) {
       console.error("No se pudo conectar a la base de datos");
       process.exit(1);
@@ -78,21 +82,5 @@ const startServer = async () => {
     process.exit(1);
   }
 };
-
-// Manejo de errores
-app.use((err, req, res, next) => {
-  console.error("Error:", err);
-
-  const statusCode = err.statusCode || 500;
-  const message = err.message || "Error interno del servidor";
-
-  res.status(statusCode).json({
-    success: false,
-    message: message,
-    ...(config.server.env === "development" && { stack: err.stack }),
-  });
-});
-
-app.use("/api/reportes", reporteRoutes);
 
 startServer();

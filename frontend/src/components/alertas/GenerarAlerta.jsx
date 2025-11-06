@@ -261,7 +261,7 @@ const GenerarAlerta = ({ onClose, onSuccess }) => {
                 <div>
                   <p className="font-semibold text-gray-800">Alta Demanda</p>
                   <p className="text-xs text-gray-600">
-                    Estación con >= 150% capacidad
+                    Estación con ≥ 150% capacidad
                   </p>
                 </div>
               </div>
