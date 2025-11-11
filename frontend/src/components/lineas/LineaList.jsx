@@ -22,7 +22,7 @@ const LineaList = () => {
       setError(null);
     } catch (err) {
       setError(
-        "Error al cargar las lineas. Verifica que el backend este corriendo."
+        "Error al cargar líneas. Verifica que el backend este corriendo."
       );
       console.error(err);
     } finally {
@@ -31,14 +31,13 @@ const LineaList = () => {
   };
 
   const handleDelete = async (id, nombre) => {
-    if (window.confirm(`¿Estas seguro de eliminar la linea ${nombre}?`)) {
+    if (window.confirm(`¿Eliminar la línea ${nombre}?`)) {
       try {
         await lineaService.deleteLinea(id);
-        alert("Linea eliminada exitosamente");
+        alert("Línea eliminada");
         fetchLineas();
       } catch (err) {
-        const errorMessage =
-          err.response?.data?.message || "Error al eliminar la linea";
+        const errorMessage = err.response?.data?.message || "Error al eliminar";
         alert(errorMessage);
         console.error(err);
       }
@@ -69,7 +68,7 @@ const LineaList = () => {
       <div className="flex justify-center items-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando lineas...</p>
+          <p className="text-gray-600">Cargando...</p>
         </div>
       </div>
     );
@@ -83,7 +82,7 @@ const LineaList = () => {
           <p className="text-red-600">{error}</p>
           <button
             onClick={fetchLineas}
-            className="mt-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
+            className="mt-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
           >
             Reintentar
           </button>
@@ -97,16 +96,16 @@ const LineaList = () => {
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
         <div className="px-6 py-4 bg-blue-600 text-white flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold">Lineas de Transmetro</h1>
+            <h1 className="text-2xl font-bold">Líneas de Transmetro</h1>
             <p className="text-blue-100 mt-1">
-              Total de lineas: {lineas.length}
+              {lineas.length} líneas registradas
             </p>
           </div>
           <button
             onClick={handleCreate}
-            className="bg-white text-blue-600 px-4 py-2 rounded font-semibold hover:bg-blue-50 transition"
+            className="bg-white text-blue-600 px-4 py-2 rounded font-semibold hover:bg-blue-50"
           >
-            + Nueva Linea
+            Nueva Línea
           </button>
         </div>
 
@@ -114,48 +113,45 @@ const LineaList = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Codigo
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Código
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Nombre
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Color
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Municipalidad
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Estaciones
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Buses
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Distancia
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Estado
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Acciones
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {lineas.map((linea) => (
-                <tr
-                  key={linea.id_linea}
-                  className="hover:bg-gray-50 transition"
-                >
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <tr key={linea.id_linea} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
                     {linea.codigo}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 text-sm text-gray-900">
                     {linea.nombre}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-6 py-4 text-sm">
                     <span
                       className="px-3 py-1 rounded-full text-white font-semibold"
                       style={{ backgroundColor: linea.color || "#6B7280" }}
@@ -163,21 +159,21 @@ const LineaList = () => {
                       {linea.color}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-gray-500">
                     {linea.municipalidad_nombre}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-gray-500">
                     {linea.total_estaciones || 0}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-gray-500">
                     {linea.total_buses || 0}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-gray-500">
                     {linea.distancia_total
                       ? `${linea.distancia_total} km`
                       : "N/A"}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-6 py-4 text-sm">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-semibold ${
                         linea.estado === "activa"
@@ -191,19 +187,16 @@ const LineaList = () => {
                         linea.estado.slice(1)}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                    <button className="text-blue-600 hover:text-blue-900">
-                      Ver
-                    </button>
+                  <td className="px-6 py-4 text-sm font-medium space-x-2">
                     <button
                       onClick={() => handleEdit(linea.id_linea)}
-                      className="text-green-600 hover:text-green-900"
+                      className="text-blue-600 hover:text-blue-800"
                     >
                       Editar
                     </button>
                     <button
                       onClick={() => handleDelete(linea.id_linea, linea.nombre)}
-                      className="text-red-600 hover:text-red-900"
+                      className="text-red-600 hover:text-red-800"
                     >
                       Eliminar
                     </button>
@@ -213,6 +206,12 @@ const LineaList = () => {
             </tbody>
           </table>
         </div>
+
+        {lineas.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500">No hay líneas registradas</p>
+          </div>
+        )}
       </div>
 
       {showForm && (

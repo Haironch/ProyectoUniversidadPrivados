@@ -11,18 +11,18 @@ import DistanciasPage from "./pages/lineas/DistanciasPage";
 import AlertasPage from "./pages/alertas/AlertasPage";
 import AccesosLineaPage from "./pages/lineas/AccesosLineaPage";
 import LoginPage from "./pages/auth/LoginPage";
-import RegistrarConteoPage from "./pages/operador/RegistrarConteoPage"; // ← NUEVO
-import logo from "./assets/images/proyecto.png";
+import RegistrarConteoPage from "./pages/operador/RegistrarConteoPage";
 import GenerarAlertaPage from "./pages/alertas/GenerarAlertaPage";
 import ReportesPage from "./pages/reportes/ReportesPage";
+import HomePage from "./pages/home/HomePage";
+import logo from "./assets/images/proyecto.png";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
-  const [currentPage, setCurrentPage] = useState("buses");
+  const [currentPage, setCurrentPage] = useState("home");
   const [showWelcome, setShowWelcome] = useState(false);
 
-  // Verificar si hay sesión guardada al cargar
   useEffect(() => {
     const savedUser = localStorage.getItem("transmetro_user");
     const savedToken = localStorage.getItem("transmetro_token");
@@ -33,36 +33,30 @@ function App() {
     }
   }, []);
 
-  // Manejar login exitoso
   const handleLoginSuccess = (userData) => {
     setUser(userData);
     setIsAuthenticated(true);
     setShowWelcome(true);
 
-    // Ocultar alerta después de 3 segundos
     setTimeout(() => {
       setShowWelcome(false);
     }, 3000);
   };
 
-  // Manejar logout
   const handleLogout = () => {
     localStorage.removeItem("transmetro_user");
     localStorage.removeItem("transmetro_token");
     setUser(null);
     setIsAuthenticated(false);
-    setCurrentPage("buses");
+    setCurrentPage("home");
   };
 
-  // Si no está autenticado, mostrar login
   if (!isAuthenticated) {
     return <LoginPage onLoginSuccess={handleLoginSuccess} />;
   }
 
-  // Si está autenticado, mostrar el sistema
   return (
     <div className="App min-h-screen bg-gray-50">
-      {/* Alerta de Bienvenida - Responsive */}
       {showWelcome && (
         <div className="fixed top-2 sm:top-4 right-2 sm:right-4 left-2 sm:left-auto z-50 animate-fade-in-down">
           <div className="bg-green-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-lg flex items-center gap-2 sm:gap-3">
@@ -93,9 +87,7 @@ function App() {
 
       <nav className="bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg sticky top-0 z-40">
         <div className="container mx-auto px-3 sm:px-4">
-          {/* Primera fila: Logo y Cerrar Sesión */}
           <div className="flex items-center justify-between py-2 sm:py-3">
-            {/* Logo y Título */}
             <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
               <img
                 src={logo}
@@ -112,7 +104,6 @@ function App() {
               </div>
             </div>
 
-            {/* Botón Cerrar Sesión */}
             <button
               onClick={handleLogout}
               className="px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 bg-red-500 hover:bg-red-600 rounded-lg text-xs sm:text-sm font-medium transition-all shadow-md flex items-center gap-1 sm:gap-2 flex-shrink-0"
@@ -134,10 +125,19 @@ function App() {
             </button>
           </div>
 
-          {/* Segunda fila: Navegación con scroll horizontal */}
           <div className="pb-2 sm:pb-3 -mx-3 sm:mx-0 px-3 sm:px-0">
             <div className="bg-blue-800 rounded-lg sm:rounded-xl p-2 sm:p-3 shadow-inner overflow-x-auto scrollbar-thin">
               <div className="flex gap-1.5 sm:gap-2 min-w-max">
+                <button
+                  onClick={() => setCurrentPage("home")}
+                  className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
+                    currentPage === "home"
+                      ? "bg-white text-blue-600 shadow-md"
+                      : "hover:bg-blue-500"
+                  }`}
+                >
+                  Inicio
+                </button>
                 <button
                   onClick={() => setCurrentPage("buses")}
                   className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
@@ -238,7 +238,6 @@ function App() {
                 >
                   Accesos/Línea
                 </button>
-
                 <button
                   onClick={() => setCurrentPage("registrar-conteo")}
                   className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
@@ -249,7 +248,6 @@ function App() {
                 >
                   Conteo
                 </button>
-
                 <button
                   onClick={() => setCurrentPage("generar-alerta")}
                   className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
@@ -260,7 +258,6 @@ function App() {
                 >
                   Nueva Alerta
                 </button>
-
                 <button
                   onClick={() => setCurrentPage("reportes")}
                   className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
@@ -278,6 +275,7 @@ function App() {
       </nav>
 
       <main className="min-h-screen">
+        {currentPage === "home" && <HomePage />}
         {currentPage === "buses" && <BusesPage />}
         {currentPage === "lineas" && <LineasPage />}
         {currentPage === "estaciones" && <EstacionesPage />}
@@ -308,7 +306,6 @@ function App() {
           animation: fade-in-down 0.3s ease-out;
         }
         
-        /* Scrollbar personalizado para navegación */
         .scrollbar-thin::-webkit-scrollbar {
           height: 4px;
         }
@@ -324,12 +321,11 @@ function App() {
           background: rgba(255, 255, 255, 0.5);
         }
         
-        /* Breakpoint personalizado xs (475px) */
         @media (min-width: 475px) {
-          .xs\:block {
+          .xs\\:block {
             display: block;
           }
-          .xs\:inline {
+          .xs\\:inline {
             display: inline;
           }
         }

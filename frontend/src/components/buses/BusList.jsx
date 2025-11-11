@@ -4,26 +4,19 @@ import busService from "../../services/busService";
 import BusForm from "./BusForm";
 
 const BusList = () => {
-  // --- Estados ---
   const [buses, setBuses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // Estado para el formulario de Creación/Edición
   const [showForm, setShowForm] = useState(false);
   const [selectedBusId, setSelectedBusId] = useState(null);
-
-  // Estado para el modal de eliminación (con dependencias)
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [busToDelete, setBusToDelete] = useState(null);
   const [deleteDependencies, setDeleteDependencies] = useState(null);
 
-  // --- Efectos ---
   useEffect(() => {
     fetchBuses();
   }, []);
 
-  // --- Lógica de Datos ---
   const fetchBuses = async () => {
     try {
       setLoading(true);
@@ -32,7 +25,7 @@ const BusList = () => {
       setError(null);
     } catch (err) {
       setError(
-        "Error al cargar los buses. Verifica que el backend este corriendo."
+        "Error al cargar buses. Verifica que el backend este corriendo."
       );
       console.error(err);
     } finally {
@@ -43,16 +36,15 @@ const BusList = () => {
   const attemptDelete = async (id, numeroUnidad) => {
     try {
       await busService.deleteBus(id);
-      alert("Bus eliminado exitosamente");
+      alert("Bus eliminado");
       fetchBuses();
     } catch (err) {
       if (err.response?.data?.dependencies) {
-        // Si hay dependencias, preparamos el modal de "desactivación"
         setBusToDelete({ id, numeroUnidad });
         setDeleteDependencies(err.response.data.dependencies);
         setShowDeleteModal(true);
       } else {
-        alert(err.response?.data?.message || "Error al eliminar el bus");
+        alert(err.response?.data?.message || "Error al eliminar");
       }
     }
   };
@@ -61,15 +53,14 @@ const BusList = () => {
     if (!busToDelete) return;
     try {
       await busService.desactivarBus(busToDelete.id);
-      alert("Bus desactivado exitosamente");
+      alert("Bus desactivado");
       closeDeleteModal();
       fetchBuses();
     } catch (err) {
-      alert(err.response?.data?.message || "Error al desactivar el bus");
+      alert(err.response?.data?.message || "Error al desactivar");
     }
   };
 
-  // --- Manejadores de UI (Formulario) ---
   const openCreateForm = () => {
     setSelectedBusId(null);
     setShowForm(true);
@@ -82,22 +73,18 @@ const BusList = () => {
 
   const closeForm = () => {
     setShowForm(false);
-    setSelectedBusId(null); // Limpiamos el ID al cerrar
+    setSelectedBusId(null);
   };
 
-  // Callback para el formulario tras éxito
   const refreshListAfterSave = () => {
     fetchBuses();
   };
 
-  // --- Manejadores de UI (Modal de Eliminación) ---
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
     setBusToDelete(null);
     setDeleteDependencies(null);
   };
-
-  // --- Renderizado Condicional de Estados ---
 
   if (loading) {
     return <LoadingSpinner />;
@@ -107,60 +94,54 @@ const BusList = () => {
     return <ErrorMessage message={error} onRetry={fetchBuses} />;
   }
 
-  // --- Renderizado Principal ---
   return (
-    <div className="container mx-auto px-4 py-4 sm:py-8">
+    <div className="container mx-auto px-4 py-8">
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        {/* Encabezado */}
-        <div className="px-4 sm:px-6 py-3 sm:py-4 bg-blue-600 text-white">
+        <div className="px-6 py-4 bg-blue-600 text-white">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold">
-                Buses de Transmetro
-              </h1>
+              <h1 className="text-2xl font-bold">Buses de Transmetro</h1>
               <p className="text-blue-100 mt-1 text-sm">
-                Total de buses: {buses.length}
+                {buses.length} buses registrados
               </p>
             </div>
             <button
               onClick={openCreateForm}
-              className="bg-white text-blue-600 px-4 py-2 rounded font-semibold hover:bg-blue-50 transition text-sm sm:text-base w-full sm:w-auto"
+              className="bg-white text-blue-600 px-4 py-2 rounded font-semibold hover:bg-blue-50 w-full sm:w-auto"
             >
               Nuevo Bus
             </button>
           </div>
         </div>
 
-        {/* Contenido de la lista (Tabla y Tarjetas) */}
         {buses.length > 0 ? (
           <>
-            {/* Vista de Tabla (Desktop) */}
             <div className="hidden lg:block overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Unidad
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Placa
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Modelo
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Línea
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Parqueo
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Capacidad
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Estado
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Acciones
                     </th>
                   </tr>
@@ -178,7 +159,6 @@ const BusList = () => {
               </table>
             </div>
 
-            {/* Vista de Tarjetas (Móvil) */}
             <div className="lg:hidden divide-y divide-gray-200">
               {buses.map((bus) => (
                 <BusCard
@@ -191,12 +171,10 @@ const BusList = () => {
             </div>
           </>
         ) : (
-          // Estado Vacío
           <EmptyState onCreate={openCreateForm} />
         )}
       </div>
 
-      {/* Modales */}
       {showForm && (
         <BusForm
           busId={selectedBusId}
@@ -219,28 +197,23 @@ const BusList = () => {
 
 export default BusList;
 
-// --- Sub-Componentes de UI ---
-// (Definidos en el mismo archivo para simplicidad, pero podrían ser archivos separados)
-
 const LoadingSpinner = () => (
   <div className="flex justify-center items-center min-h-screen px-4">
     <div className="text-center">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-      <p className="text-gray-600 text-sm sm:text-base">Cargando buses...</p>
+      <p className="text-gray-600">Cargando...</p>
     </div>
   </div>
 );
 
 const ErrorMessage = ({ message, onRetry }) => (
   <div className="flex justify-center items-center min-h-screen px-4">
-    <div className="bg-red-50 border border-red-200 rounded-lg p-4 sm:p-6 max-w-md w-full">
-      <h3 className="text-red-800 font-semibold mb-2 text-sm sm:text-base">
-        Error
-      </h3>
+    <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md w-full">
+      <h3 className="text-red-800 font-semibold mb-2">Error</h3>
       <p className="text-red-600 text-sm">{message}</p>
       <button
         onClick={onRetry}
-        className="mt-4 w-full sm:w-auto bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition text-sm"
+        className="mt-4 w-full sm:w-auto bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
       >
         Reintentar
       </button>
@@ -250,29 +223,31 @@ const ErrorMessage = ({ message, onRetry }) => (
 
 const EmptyState = ({ onCreate }) => (
   <div className="text-center py-12 px-4">
-    <svg
-      className="mx-auto h-12 w-12 text-gray-400"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-      />
-    </svg>
-    <h3 className="mt-2 text-sm font-medium text-gray-900">No hay buses</h3>
-    <p className="mt-1 text-sm text-gray-500">Comienza creando un nuevo bus.</p>
-    <div className="mt-6">
-      <button
-        onClick={onCreate}
-        className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+    <div className="text-gray-400 mb-2">
+      <svg
+        className="mx-auto h-12 w-12"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
       >
-        + Nuevo Bus
-      </button>
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+        />
+      </svg>
     </div>
+    <h3 className="text-sm font-medium text-gray-900">No hay buses</h3>
+    <p className="text-sm text-gray-500 mt-1">
+      Crea un nuevo bus para comenzar
+    </p>
+    <button
+      onClick={onCreate}
+      className="mt-6 bg-blue-600 text-white px-4 py-2 rounded font-semibold hover:bg-blue-700"
+    >
+      Nuevo Bus
+    </button>
   </div>
 );
 
@@ -281,7 +256,7 @@ const BusStatusBadge = ({ estado }) => {
     operativo: {
       text: "Operativo",
       className: "bg-green-100 text-green-800",
-      mobileText: "Operativo",
+      mobileText: "Oper.",
     },
     fuera_servicio: {
       text: "Fuera de Servicio",
@@ -299,13 +274,11 @@ const BusStatusBadge = ({ estado }) => {
 
   return (
     <>
-      {/* Móvil */}
       <span
-        className={`lg:hidden px-2 py-1 rounded-full text-xs font-semibold whitespace-nowrap ml-2 ${status.className}`}
+        className={`lg:hidden px-2 py-1 rounded-full text-xs font-semibold ${status.className}`}
       >
         {status.mobileText}
       </span>
-      {/* Desktop */}
       <span
         className={`hidden lg:inline-block px-2 py-1 rounded-full text-xs font-semibold ${status.className}`}
       >
@@ -316,17 +289,13 @@ const BusStatusBadge = ({ estado }) => {
 };
 
 const BusTableRow = ({ bus, onEdit, onDelete }) => (
-  <tr key={bus.id_bus} className="hover:bg-gray-50 transition">
-    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+  <tr className="hover:bg-gray-50">
+    <td className="px-6 py-4 text-sm font-medium text-gray-900">
       {bus.numero_unidad}
     </td>
-    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-      {bus.placa}
-    </td>
-    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-      {bus.modelo || "N/A"}
-    </td>
-    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+    <td className="px-6 py-4 text-sm text-gray-900">{bus.placa}</td>
+    <td className="px-6 py-4 text-sm text-gray-500">{bus.modelo || "N/A"}</td>
+    <td className="px-6 py-4 text-sm text-gray-500">
       {bus.linea_nombre ? (
         <span className="text-blue-600 font-medium">
           {bus.linea_codigo} - {bus.linea_nombre}
@@ -338,36 +307,34 @@ const BusTableRow = ({ bus, onEdit, onDelete }) => (
     <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
       {bus.parqueo_nombre || "N/A"}
     </td>
-    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-      {bus.capacidad_maxima}
-    </td>
-    <td className="px-6 py-4 whitespace-nowrap text-sm">
+    <td className="px-6 py-4 text-sm text-gray-500">{bus.capacidad_maxima}</td>
+    <td className="px-6 py-4 text-sm">
       <BusStatusBadge estado={bus.estado} />
     </td>
-    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-      <button
-        onClick={() => onEdit(bus.id_bus)}
-        className="text-green-600 hover:text-green-900"
-      >
-        Editar
-      </button>
-      <button
-        onClick={() => onDelete(bus.id_bus, bus.numero_unidad)}
-        className="text-red-600 hover:text-red-900"
-      >
-        Eliminar
-      </button>
+    <td className="px-6 py-4 text-sm font-medium">
+      <div className="flex flex-col gap-1">
+        <button
+          onClick={() => onEdit(bus.id_bus)}
+          className="text-blue-600 hover:text-blue-800 text-left"
+        >
+          Editar
+        </button>
+        <button
+          onClick={() => onDelete(bus.id_bus, bus.numero_unidad)}
+          className="text-red-600 hover:text-red-800 text-left"
+        >
+          Eliminar
+        </button>
+      </div>
     </td>
   </tr>
 );
 
 const BusCard = ({ bus, onEdit, onDelete }) => (
-  <div key={bus.id_bus} className="p-4 hover:bg-gray-50 transition">
+  <div className="p-4">
     <div className="flex items-start justify-between mb-3">
       <div className="flex-1">
-        <h3 className="font-bold text-gray-900 text-base">
-          {bus.numero_unidad}
-        </h3>
+        <h3 className="font-bold text-gray-900">{bus.numero_unidad}</h3>
         <p className="text-sm text-gray-600">{bus.placa}</p>
       </div>
       <BusStatusBadge estado={bus.estado} />
@@ -401,18 +368,15 @@ const BusCard = ({ bus, onEdit, onDelete }) => (
     </div>
 
     <div className="flex gap-2">
-      <button className="flex-1 bg-blue-50 text-blue-600 px-3 py-2 rounded text-sm font-medium hover:bg-blue-100 transition">
-        Ver
-      </button>
       <button
         onClick={() => onEdit(bus.id_bus)}
-        className="flex-1 bg-green-50 text-green-600 px-3 py-2 rounded text-sm font-medium hover:bg-green-100 transition"
+        className="flex-1 bg-blue-50 text-blue-600 px-3 py-2 rounded text-sm font-medium hover:bg-blue-100"
       >
         Editar
       </button>
       <button
         onClick={() => onDelete(bus.id_bus, bus.numero_unidad)}
-        className="flex-1 bg-red-50 text-red-600 px-3 py-2 rounded text-sm font-medium hover:bg-red-100 transition"
+        className="flex-1 bg-red-50 text-red-600 px-3 py-2 rounded text-sm font-medium hover:bg-red-100"
       >
         Eliminar
       </button>
@@ -459,22 +423,22 @@ const DeleteDependencyModal = ({ bus, dependencies, onClose, onConfirm }) => (
         </div>
 
         <p className="text-sm text-gray-600 mb-6">
-          <strong>Sugerencia:</strong> Puedes desactivar el bus para que ya no
-          aparezca en operaciones activas, pero se mantendrá el historial.
+          Puedes desactivar el bus para que ya no aparezca en operaciones
+          activas
         </p>
 
         <div className="flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium"
+            className="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium"
           >
             Cancelar
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition font-medium"
+            className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 font-medium"
           >
-            Desactivar Bus
+            Desactivar
           </button>
         </div>
       </div>
