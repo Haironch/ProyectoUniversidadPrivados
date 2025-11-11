@@ -38,7 +38,6 @@ const AccesosLineaView = () => {
     try {
       const response = await lineaService.getAccesosByLinea(idLinea);
 
-      // Si la respuesta es exitosa pero sin datos
       if (response.success && response.total_accesos === 0) {
         setError("Esta línea no tiene accesos registrados");
         setAccesosData(null);
@@ -46,11 +45,10 @@ const AccesosLineaView = () => {
         setAccesosData(response);
       }
     } catch (err) {
-      // Manejo específico según el tipo de error
       if (err.response?.status === 404) {
         setError(
           err.response?.data?.message ||
-            "No se encontraron accesos para esta línea"
+            "No se encontraron accesos para esta linea"
         );
       } else if (err.response?.status === 500) {
         setError("Error del servidor al cargar los accesos");
@@ -71,8 +69,8 @@ const AccesosLineaView = () => {
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
         <div className="px-6 py-4 bg-cyan-600 text-white">
           <h1 className="text-2xl font-bold">Accesos por Línea</h1>
-          <p className="text-cyan-100 mt-1">
-            Punto 8: Consulta de todos los accesos de una línea
+          <p className="text-cyan-100 mt-1 text-sm">
+            Consulta todos los accesos de una línea específica
           </p>
         </div>
 
@@ -86,7 +84,7 @@ const AccesosLineaView = () => {
               onChange={handleLineaChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
             >
-              <option value="">-- Selecciona una línea --</option>
+              <option value="">Selecciona una línea</option>
               {lineas.map((l) => (
                 <option key={l.id_linea} value={l.id_linea}>
                   {l.codigo} - {l.nombre}
@@ -104,7 +102,7 @@ const AccesosLineaView = () => {
           {loading && (
             <div className="text-center py-8">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-600 mx-auto"></div>
-              <p className="text-gray-600 mt-4">Cargando accesos...</p>
+              <p className="text-gray-600 mt-4">Cargando...</p>
             </div>
           )}
 
@@ -116,13 +114,13 @@ const AccesosLineaView = () => {
                 </h3>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-gray-600">Total de Estaciones:</span>
+                    <span className="text-gray-600">Estaciones:</span>
                     <span className="ml-2 font-bold text-cyan-900">
                       {accesosData.total_estaciones}
                     </span>
                   </div>
                   <div>
-                    <span className="text-gray-600">Total de Accesos:</span>
+                    <span className="text-gray-600">Accesos:</span>
                     <span className="ml-2 font-bold text-cyan-900">
                       {accesosData.total_accesos}
                     </span>
@@ -136,7 +134,7 @@ const AccesosLineaView = () => {
                     key={estacion.id_estacion}
                     className="border border-gray-200 rounded-lg overflow-hidden"
                   >
-                    <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
+                    <div className="bg-gray-50 px-4 py-3 border-b">
                       <div className="flex justify-between items-center">
                         <div>
                           <h4 className="font-semibold text-gray-900">
@@ -197,7 +195,7 @@ const AccesosLineaView = () => {
                                 {acceso.hora_cierre?.substring(0, 5)}
                               </td>
                               <td className="px-4 py-3 text-sm text-gray-500">
-                                {acceso.guardias_asignados} guardia(s)
+                                {acceso.guardias_asignados}
                               </td>
                               <td className="px-4 py-3 text-sm">
                                 <span

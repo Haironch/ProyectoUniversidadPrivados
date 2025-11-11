@@ -22,7 +22,7 @@ const OperadorList = () => {
       setError(null);
     } catch (err) {
       setError(
-        "Error al cargar los operadores. Verifica que el backend este corriendo."
+        "Error al cargar operadores. Verifica que el backend este corriendo."
       );
       console.error(err);
     } finally {
@@ -31,18 +31,13 @@ const OperadorList = () => {
   };
 
   const handleDelete = async (id, nombre, apellido) => {
-    if (
-      window.confirm(
-        `¿Estas seguro de eliminar al operador ${nombre} ${apellido}?`
-      )
-    ) {
+    if (window.confirm(`¿Eliminar al operador ${nombre} ${apellido}?`)) {
       try {
         await operadorService.deleteOperador(id);
-        alert("Operador eliminado exitosamente");
+        alert("Operador eliminado");
         fetchOperadores();
       } catch (err) {
-        const errorMessage =
-          err.response?.data?.message || "Error al eliminar el operador";
+        const errorMessage = err.response?.data?.message || "Error al eliminar";
         alert(errorMessage);
         console.error(err);
       }
@@ -73,7 +68,7 @@ const OperadorList = () => {
       <div className="flex justify-center items-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando operadores...</p>
+          <p className="text-gray-600">Cargando...</p>
         </div>
       </div>
     );
@@ -87,7 +82,7 @@ const OperadorList = () => {
           <p className="text-red-600">{error}</p>
           <button
             onClick={fetchOperadores}
-            className="mt-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
+            className="mt-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
           >
             Reintentar
           </button>
@@ -103,14 +98,14 @@ const OperadorList = () => {
           <div>
             <h1 className="text-2xl font-bold">Operadores de Estaciones</h1>
             <p className="text-teal-100 mt-1">
-              Total de operadores: {operadores.length}
+              {operadores.length} operadores registrados
             </p>
           </div>
           <button
             onClick={handleCreate}
-            className="bg-white text-teal-600 px-4 py-2 rounded font-semibold hover:bg-teal-50 transition"
+            className="bg-white text-teal-600 px-4 py-2 rounded font-semibold hover:bg-teal-50"
           >
-            + Nuevo Operador
+            Nuevo Operador
           </button>
         </div>
 
@@ -118,39 +113,36 @@ const OperadorList = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Nombre
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   DPI
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Usuario
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Estación
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Contacto
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Turno
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Estado
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Acciones
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {operadores.map((operador) => (
-                <tr
-                  key={operador.id_operador}
-                  className="hover:bg-gray-50 transition"
-                >
-                  <td className="px-6 py-4 whitespace-nowrap">
+                <tr key={operador.id_operador} className="hover:bg-gray-50">
+                  <td className="px-6 py-4">
                     <div className="text-sm font-medium text-gray-900">
                       {operador.nombre} {operador.apellido}
                     </div>
@@ -161,15 +153,15 @@ const OperadorList = () => {
                       ).toLocaleDateString()}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-gray-500">
                     {operador.dpi}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4">
                     <div className="text-sm font-medium text-gray-900">
                       {operador.usuario}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4">
                     <div className="text-sm text-gray-900">
                       {operador.estacion_nombre}
                     </div>
@@ -177,7 +169,7 @@ const OperadorList = () => {
                       {operador.estacion_codigo}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4">
                     <div className="text-sm text-gray-500">
                       {operador.telefono || "N/A"}
                     </div>
@@ -185,7 +177,7 @@ const OperadorList = () => {
                       {operador.email || "N/A"}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-6 py-4 text-sm">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-semibold ${
                         operador.turno === "matutino"
@@ -201,7 +193,7 @@ const OperadorList = () => {
                         operador.turno.slice(1)}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-6 py-4 text-sm">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-semibold ${
                         operador.estado === "activo"
@@ -218,13 +210,10 @@ const OperadorList = () => {
                         : "Vacaciones"}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                    <button className="text-blue-600 hover:text-blue-900">
-                      Ver
-                    </button>
+                  <td className="px-6 py-4 text-sm font-medium space-x-2">
                     <button
                       onClick={() => handleEdit(operador.id_operador)}
-                      className="text-green-600 hover:text-green-900"
+                      className="text-blue-600 hover:text-blue-800"
                     >
                       Editar
                     </button>
@@ -236,7 +225,7 @@ const OperadorList = () => {
                           operador.apellido
                         )
                       }
-                      className="text-red-600 hover:text-red-900"
+                      className="text-red-600 hover:text-red-800"
                     >
                       Eliminar
                     </button>
@@ -246,6 +235,12 @@ const OperadorList = () => {
             </tbody>
           </table>
         </div>
+
+        {operadores.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500">No hay operadores registrados</p>
+          </div>
+        )}
       </div>
 
       {showForm && (

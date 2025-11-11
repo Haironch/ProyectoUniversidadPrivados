@@ -22,7 +22,7 @@ const GuardiaList = () => {
       setError(null);
     } catch (err) {
       setError(
-        "Error al cargar los guardias. Verifica que el backend este corriendo."
+        "Error al cargar guardias. Verifica que el backend este corriendo."
       );
       console.error(err);
     } finally {
@@ -31,18 +31,13 @@ const GuardiaList = () => {
   };
 
   const handleDelete = async (id, nombre, apellido) => {
-    if (
-      window.confirm(
-        `¿Estas seguro de eliminar al guardia ${nombre} ${apellido}?`
-      )
-    ) {
+    if (window.confirm(`¿Eliminar al guardia ${nombre} ${apellido}?`)) {
       try {
         await guardiaService.deleteGuardia(id);
-        alert("Guardia eliminado exitosamente");
+        alert("Guardia eliminado");
         fetchGuardias();
       } catch (err) {
-        const errorMessage =
-          err.response?.data?.message || "Error al eliminar el guardia";
+        const errorMessage = err.response?.data?.message || "Error al eliminar";
         alert(errorMessage);
         console.error(err);
       }
@@ -73,7 +68,7 @@ const GuardiaList = () => {
       <div className="flex justify-center items-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando guardias...</p>
+          <p className="text-gray-600">Cargando...</p>
         </div>
       </div>
     );
@@ -87,7 +82,7 @@ const GuardiaList = () => {
           <p className="text-red-600">{error}</p>
           <button
             onClick={fetchGuardias}
-            className="mt-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
+            className="mt-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
           >
             Reintentar
           </button>
@@ -103,14 +98,14 @@ const GuardiaList = () => {
           <div>
             <h1 className="text-2xl font-bold">Guardias de Seguridad</h1>
             <p className="text-indigo-100 mt-1">
-              Total de guardias: {guardias.length}
+              {guardias.length} guardias registrados
             </p>
           </div>
           <button
             onClick={handleCreate}
-            className="bg-white text-indigo-600 px-4 py-2 rounded font-semibold hover:bg-indigo-50 transition"
+            className="bg-white text-indigo-600 px-4 py-2 rounded font-semibold hover:bg-indigo-50"
           >
-            + Nuevo Guardia
+            Nuevo Guardia
           </button>
         </div>
 
@@ -118,39 +113,36 @@ const GuardiaList = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Nombre
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   DPI
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Estación
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Acceso
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Teléfono
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Turno
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Estado
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Acciones
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {guardias.map((guardia) => (
-                <tr
-                  key={guardia.id_guardia}
-                  className="hover:bg-gray-50 transition"
-                >
-                  <td className="px-6 py-4 whitespace-nowrap">
+                <tr key={guardia.id_guardia} className="hover:bg-gray-50">
+                  <td className="px-6 py-4">
                     <div className="text-sm font-medium text-gray-900">
                       {guardia.nombre} {guardia.apellido}
                     </div>
@@ -161,10 +153,10 @@ const GuardiaList = () => {
                       ).toLocaleDateString()}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-gray-500">
                     {guardia.dpi}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4">
                     <div className="text-sm text-gray-900">
                       {guardia.estacion_nombre}
                     </div>
@@ -172,7 +164,7 @@ const GuardiaList = () => {
                       {guardia.estacion_codigo}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4">
                     <div className="text-sm text-gray-900">
                       {guardia.acceso_nombre}
                     </div>
@@ -190,10 +182,10 @@ const GuardiaList = () => {
                       </span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-gray-500">
                     {guardia.telefono || "N/A"}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-6 py-4 text-sm">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-semibold ${
                         guardia.turno === "matutino"
@@ -209,7 +201,7 @@ const GuardiaList = () => {
                         guardia.turno.slice(1)}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-6 py-4 text-sm">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-semibold ${
                         guardia.estado === "activo"
@@ -230,13 +222,10 @@ const GuardiaList = () => {
                         : "Licencia"}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                    <button className="text-blue-600 hover:text-blue-900">
-                      Ver
-                    </button>
+                  <td className="px-6 py-4 text-sm font-medium space-x-2">
                     <button
                       onClick={() => handleEdit(guardia.id_guardia)}
-                      className="text-green-600 hover:text-green-900"
+                      className="text-blue-600 hover:text-blue-800"
                     >
                       Editar
                     </button>
@@ -248,7 +237,7 @@ const GuardiaList = () => {
                           guardia.apellido
                         )
                       }
-                      className="text-red-600 hover:text-red-900"
+                      className="text-red-600 hover:text-red-800"
                     >
                       Eliminar
                     </button>
@@ -258,6 +247,12 @@ const GuardiaList = () => {
             </tbody>
           </table>
         </div>
+
+        {guardias.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500">No hay guardias registrados</p>
+          </div>
+        )}
       </div>
 
       {showForm && (

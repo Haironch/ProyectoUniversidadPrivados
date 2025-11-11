@@ -89,26 +89,22 @@ const AccesoForm = ({ accesoId, onClose, onSuccess }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        {/* Header */}
         <div className="px-4 sm:px-6 py-3 sm:py-4 bg-orange-600 text-white rounded-t-lg sticky top-0 z-10">
           <h2 className="text-lg sm:text-xl font-bold">
             {accesoId ? "Editar Acceso" : "Nuevo Acceso"}
           </h2>
         </div>
 
-        {/* Form */}
         <form
           onSubmit={handleSubmit}
           className="p-4 sm:p-6 space-y-3 sm:space-y-4"
         >
-          {/* Error Message */}
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 sm:px-4 sm:py-3 rounded text-sm">
               {error}
             </div>
           )}
 
-          {/* Estación */}
           <div>
             <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
               Estación *
@@ -129,7 +125,6 @@ const AccesoForm = ({ accesoId, onClose, onSuccess }) => {
             </select>
           </div>
 
-          {/* Nombre del Acceso */}
           <div>
             <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
               Nombre del Acceso *
@@ -140,12 +135,12 @@ const AccesoForm = ({ accesoId, onClose, onSuccess }) => {
               value={formData.nombre}
               onChange={handleChange}
               required
+              maxLength={100}
               className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
               placeholder="Ej: Acceso Norte"
             />
           </div>
 
-          {/* Tipo de Acceso */}
           <div>
             <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
               Tipo de Acceso
@@ -162,7 +157,6 @@ const AccesoForm = ({ accesoId, onClose, onSuccess }) => {
             </select>
           </div>
 
-          {/* Horarios - 1 columna en móvil, 2 en desktop */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
@@ -191,7 +185,6 @@ const AccesoForm = ({ accesoId, onClose, onSuccess }) => {
             </div>
           </div>
 
-          {/* Checkbox Activo */}
           <div className="flex items-center pt-2">
             <input
               type="checkbox"
@@ -205,7 +198,6 @@ const AccesoForm = ({ accesoId, onClose, onSuccess }) => {
             </label>
           </div>
 
-          {/* Botones - Stack en móvil, lado a lado en desktop */}
           <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 pt-2 sm:pt-4">
             <button
               type="button"

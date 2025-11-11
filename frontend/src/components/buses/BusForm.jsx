@@ -13,7 +13,7 @@ const BusForm = ({ busId, onClose, onSuccess }) => {
     capacidad_maxima: "150",
     id_parqueo: "",
     id_linea: "",
-    estado: "operativo", // ← CAMBIADO: activo → operativo
+    estado: "operativo",
   });
 
   const [lineas, setLineas] = useState([]);
@@ -59,10 +59,20 @@ const BusForm = ({ busId, onClose, onSuccess }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+
+    if (name === "anio") {
+      if (value === "" || (value.length <= 4 && /^\d*$/.test(value))) {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+      }
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -89,26 +99,22 @@ const BusForm = ({ busId, onClose, onSuccess }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        {/* Header */}
         <div className="px-4 sm:px-6 py-3 sm:py-4 bg-blue-600 text-white rounded-t-lg sticky top-0 z-10">
           <h2 className="text-lg sm:text-xl font-bold">
             {busId ? "Editar Bus" : "Nuevo Bus"}
           </h2>
         </div>
 
-        {/* Form */}
         <form
           onSubmit={handleSubmit}
           className="p-4 sm:p-6 space-y-3 sm:space-y-4"
         >
-          {/* Error Message */}
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 sm:px-4 sm:py-3 rounded text-sm">
               {error}
             </div>
           )}
 
-          {/* Número de Unidad y Placa - 1 columna en móvil, 2 en desktop */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
@@ -120,6 +126,7 @@ const BusForm = ({ busId, onClose, onSuccess }) => {
                 value={formData.numero_unidad}
                 onChange={handleChange}
                 required
+                maxLength={20}
                 className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Ej: BUS-001"
               />
@@ -135,13 +142,13 @@ const BusForm = ({ busId, onClose, onSuccess }) => {
                 value={formData.placa}
                 onChange={handleChange}
                 required
+                maxLength={15}
                 className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Ej: P-123ABC"
               />
             </div>
           </div>
 
-          {/* Modelo y Año */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
@@ -152,6 +159,7 @@ const BusForm = ({ busId, onClose, onSuccess }) => {
                 name="modelo"
                 value={formData.modelo}
                 onChange={handleChange}
+                maxLength={50}
                 className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Ej: Volvo B7RLE"
               />
@@ -162,17 +170,18 @@ const BusForm = ({ busId, onClose, onSuccess }) => {
                 Año
               </label>
               <input
-                type="number"
+                type="text"
                 name="anio"
                 value={formData.anio}
                 onChange={handleChange}
+                pattern="\d{4}"
+                maxLength={4}
                 className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="2024"
               />
             </div>
           </div>
 
-          {/* Capacidad */}
           <div>
             <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
               Capacidad de Pasajeros *
@@ -183,11 +192,12 @@ const BusForm = ({ busId, onClose, onSuccess }) => {
               value={formData.capacidad_maxima}
               onChange={handleChange}
               required
+              min={1}
+              max={300}
               className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          {/* Parqueo */}
           <div>
             <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
               Parqueo Asignado *
@@ -211,7 +221,6 @@ const BusForm = ({ busId, onClose, onSuccess }) => {
             </p>
           </div>
 
-          {/* Línea */}
           <div>
             <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
               Línea Asignada (opcional)
@@ -231,7 +240,6 @@ const BusForm = ({ busId, onClose, onSuccess }) => {
             </select>
           </div>
 
-          {/* Estado */}
           <div>
             <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
               Estado
@@ -242,13 +250,12 @@ const BusForm = ({ busId, onClose, onSuccess }) => {
               onChange={handleChange}
               className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="operativo">Operativo</option> {/* ← CAMBIADO */}
+              <option value="operativo">Operativo</option>
               <option value="mantenimiento">Mantenimiento</option>
               <option value="fuera_servicio">Fuera de Servicio</option>
             </select>
           </div>
 
-          {/* Botones - Stack en móvil, lado a lado en desktop */}
           <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 pt-2 sm:pt-4">
             <button
               type="button"

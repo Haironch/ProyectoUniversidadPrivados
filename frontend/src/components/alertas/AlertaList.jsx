@@ -13,7 +13,6 @@ const AlertaList = () => {
 
   useEffect(() => {
     fetchData();
-    // Actualizar cada 30 segundos
     const interval = setInterval(fetchData, 30000);
     return () => clearInterval(interval);
   }, [filtroEstado, filtroPrioridad]);
@@ -63,7 +62,7 @@ const AlertaList = () => {
   };
 
   const handleCancelar = async (id) => {
-    if (window.confirm("¿Estás seguro de cancelar esta alerta?")) {
+    if (window.confirm("¿Cancelar esta alerta?")) {
       try {
         await alertaService.cancelarAlerta(id);
         fetchData();
@@ -75,48 +74,23 @@ const AlertaList = () => {
   };
 
   const getPrioridadColor = (prioridad) => {
-    switch (prioridad) {
-      case "critica":
-        return "bg-red-100 text-red-800 border-red-300";
-      case "alta":
-        return "bg-orange-100 text-orange-800 border-orange-300";
-      case "media":
-        return "bg-yellow-100 text-yellow-800 border-yellow-300";
-      case "baja":
-        return "bg-blue-100 text-blue-800 border-blue-300";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-300";
-    }
+    const colores = {
+      critica: "bg-red-50 text-red-700 border-red-200",
+      alta: "bg-orange-50 text-orange-700 border-orange-200",
+      media: "bg-yellow-50 text-yellow-700 border-yellow-200",
+      baja: "bg-blue-50 text-blue-700 border-blue-200",
+    };
+    return colores[prioridad] || "bg-gray-50 text-gray-700 border-gray-200";
   };
 
   const getEstadoColor = (estado) => {
-    switch (estado) {
-      case "pendiente":
-        return "bg-red-100 text-red-800";
-      case "en_atencion":
-        return "bg-yellow-100 text-yellow-800";
-      case "resuelta":
-        return "bg-green-100 text-green-800";
-      case "cancelada":
-        return "bg-gray-100 text-gray-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getPrioridadIcon = (prioridad) => {
-    switch (prioridad) {
-      case "critica":
-        return "🚨";
-      case "alta":
-        return "⚠️";
-      case "media":
-        return "⚡";
-      case "baja":
-        return "ℹ️";
-      default:
-        return "•";
-    }
+    const colores = {
+      pendiente: "bg-red-50 text-red-700",
+      en_atencion: "bg-yellow-50 text-yellow-700",
+      resuelta: "bg-green-50 text-green-700",
+      cancelada: "bg-gray-50 text-gray-700",
+    };
+    return colores[estado] || "bg-gray-50 text-gray-700";
   };
 
   if (loading && !alertas.length) {
@@ -124,9 +98,7 @@ const AlertaList = () => {
       <div className="flex justify-center items-center min-h-screen px-4">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 text-sm sm:text-base">
-            Cargando alertas...
-          </p>
+          <p className="text-gray-600">Cargando...</p>
         </div>
       </div>
     );
@@ -134,82 +106,53 @@ const AlertaList = () => {
 
   return (
     <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
-      {/* Resumen de alertas activas - Responsive Grid */}
       {alertasActivas && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
-          <div className="bg-gradient-to-br from-red-50 to-red-100 border-2 border-red-300 rounded-xl p-3 sm:p-4 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between mb-2">
-              <div className="text-xs sm:text-sm text-red-600 font-medium">
-                Críticas
-              </div>
-              <span className="text-xl">🚨</span>
-            </div>
-            <div className="text-2xl sm:text-3xl font-bold text-red-900">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div className="text-sm text-red-600 mb-1">Críticas</div>
+            <div className="text-3xl font-bold text-red-700">
               {alertasActivas.por_prioridad.critica}
             </div>
           </div>
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 border-2 border-orange-300 rounded-xl p-3 sm:p-4 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between mb-2">
-              <div className="text-xs sm:text-sm text-orange-600 font-medium">
-                Alta
-              </div>
-              <span className="text-xl">⚠️</span>
-            </div>
-            <div className="text-2xl sm:text-3xl font-bold text-orange-900">
+          <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+            <div className="text-sm text-orange-600 mb-1">Alta</div>
+            <div className="text-3xl font-bold text-orange-700">
               {alertasActivas.por_prioridad.alta}
             </div>
           </div>
-          <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 border-2 border-yellow-300 rounded-xl p-3 sm:p-4 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between mb-2">
-              <div className="text-xs sm:text-sm text-yellow-600 font-medium">
-                Media
-              </div>
-              <span className="text-xl">⚡</span>
-            </div>
-            <div className="text-2xl sm:text-3xl font-bold text-yellow-900">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <div className="text-sm text-yellow-600 mb-1">Media</div>
+            <div className="text-3xl font-bold text-yellow-700">
               {alertasActivas.por_prioridad.media}
             </div>
           </div>
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-300 rounded-xl p-3 sm:p-4 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between mb-2">
-              <div className="text-xs sm:text-sm text-blue-600 font-medium">
-                Baja
-              </div>
-              <span className="text-xl">ℹ️</span>
-            </div>
-            <div className="text-2xl sm:text-3xl font-bold text-blue-900">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="text-sm text-blue-600 mb-1">Baja</div>
+            <div className="text-3xl font-bold text-blue-700">
               {alertasActivas.por_prioridad.baja}
             </div>
           </div>
         </div>
       )}
 
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-        {/* Header */}
-        <div className="px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-red-600 to-red-700 text-white">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
-                <span>🔔</span> Sistema de Alertas
-              </h1>
-              <p className="text-red-100 mt-1 text-xs sm:text-sm">
-                Total de alertas: {alertas.length} • Actualización automática
-              </p>
-            </div>
-          </div>
+      <div className="bg-white rounded-lg shadow">
+        <div className="px-4 sm:px-6 py-4 bg-red-600 text-white rounded-t-lg">
+          <h1 className="text-xl sm:text-2xl font-bold">Alertas del Sistema</h1>
+          <p className="text-red-100 text-sm mt-1">
+            {alertas.length} alertas registradas
+          </p>
         </div>
 
-        {/* Filtros - Responsive */}
-        <div className="p-3 sm:p-4 bg-gray-50 border-b">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        <div className="p-4 bg-gray-50 border-b">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
-                Filtrar por Estado
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Estado
               </label>
               <select
                 value={filtroEstado}
                 onChange={(e) => setFiltroEstado(e.target.value)}
-                className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
               >
                 <option value="">Todos</option>
                 <option value="pendiente">Pendiente</option>
@@ -219,13 +162,13 @@ const AlertaList = () => {
               </select>
             </div>
             <div>
-              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
-                Filtrar por Prioridad
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Prioridad
               </label>
               <select
                 value={filtroPrioridad}
                 onChange={(e) => setFiltroPrioridad(e.target.value)}
-                className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"
               >
                 <option value="">Todas</option>
                 <option value="critica">Crítica</option>
@@ -238,12 +181,11 @@ const AlertaList = () => {
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 sm:px-4 sm:py-3 m-3 sm:m-4 rounded-lg text-sm">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 m-4 rounded-lg">
             {error}
           </div>
         )}
 
-        {/* Vista Desktop - Tabla */}
         <div className="hidden lg:block overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -258,7 +200,7 @@ const AlertaList = () => {
                   Descripción
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Estación/Bus
+                  Ubicación
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Fecha
@@ -273,27 +215,23 @@ const AlertaList = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {alertas.map((alerta) => (
-                <tr
-                  key={alerta.id_alerta}
-                  className="hover:bg-gray-50 transition"
-                >
-                  <td className="px-6 py-4 whitespace-nowrap">
+                <tr key={alerta.id_alerta} className="hover:bg-gray-50">
+                  <td className="px-6 py-4">
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-bold border-2 inline-flex items-center gap-1 ${getPrioridadColor(
+                      className={`px-3 py-1 rounded-full text-xs font-bold border ${getPrioridadColor(
                         alerta.prioridad
                       )}`}
                     >
-                      <span>{getPrioridadIcon(alerta.prioridad)}</span>
                       {alerta.prioridad.toUpperCase()}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 text-sm text-gray-900">
                     {alerta.tipo_alerta.replace(/_/g, " ")}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900 max-w-xs">
                     {alerta.descripcion}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-6 py-4 text-sm">
                     {alerta.estacion_nombre && (
                       <div>
                         <div className="font-medium text-gray-900">
@@ -306,11 +244,11 @@ const AlertaList = () => {
                     )}
                     {alerta.bus_numero && (
                       <div className="text-gray-500">
-                        Bus: {alerta.bus_numero}
+                        Bus {alerta.bus_numero}
                       </div>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-gray-500">
                     {new Date(alerta.fecha_hora_generada).toLocaleDateString()}
                     <br />
                     <span className="text-xs">
@@ -319,7 +257,7 @@ const AlertaList = () => {
                       ).toLocaleTimeString()}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-semibold ${getEstadoColor(
                         alerta.estado
@@ -328,11 +266,11 @@ const AlertaList = () => {
                       {alerta.estado.replace(/_/g, " ")}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                  <td className="px-6 py-4 text-sm font-medium space-x-2">
                     {alerta.estado === "pendiente" && (
                       <button
                         onClick={() => handleAtender(alerta.id_alerta)}
-                        className="text-blue-600 hover:text-blue-900"
+                        className="text-blue-600 hover:text-blue-800"
                       >
                         Atender
                       </button>
@@ -342,13 +280,13 @@ const AlertaList = () => {
                       <>
                         <button
                           onClick={() => handleResolver(alerta.id_alerta)}
-                          className="text-green-600 hover:text-green-900"
+                          className="text-green-600 hover:text-green-800"
                         >
                           Resolver
                         </button>
                         <button
                           onClick={() => handleCancelar(alerta.id_alerta)}
-                          className="text-red-600 hover:text-red-900"
+                          className="text-red-600 hover:text-red-800"
                         >
                           Cancelar
                         </button>
@@ -361,30 +299,19 @@ const AlertaList = () => {
           </table>
         </div>
 
-        {/* Vista Móvil - Cards */}
         <div className="lg:hidden divide-y divide-gray-200">
           {alertas.map((alerta) => (
-            <div
-              key={alerta.id_alerta}
-              className="p-4 hover:bg-gray-50 transition"
-            >
-              {/* Header Card */}
+            <div key={alerta.id_alerta} className="p-4">
               <div className="flex items-start justify-between mb-3">
-                <div className="flex-1">
-                  <span
-                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border-2 ${getPrioridadColor(
-                      alerta.prioridad
-                    )}`}
-                  >
-                    <span>{getPrioridadIcon(alerta.prioridad)}</span>
-                    {alerta.prioridad.toUpperCase()}
-                  </span>
-                  <p className="text-xs text-gray-500 mt-2">
-                    {alerta.tipo_alerta.replace(/_/g, " ")}
-                  </p>
-                </div>
                 <span
-                  className={`px-2 py-1 rounded-full text-xs font-semibold whitespace-nowrap ml-2 ${getEstadoColor(
+                  className={`px-2.5 py-1 rounded-full text-xs font-bold border ${getPrioridadColor(
+                    alerta.prioridad
+                  )}`}
+                >
+                  {alerta.prioridad.toUpperCase()}
+                </span>
+                <span
+                  className={`px-2 py-1 rounded-full text-xs font-semibold ${getEstadoColor(
                     alerta.estado
                   )}`}
                 >
@@ -392,21 +319,20 @@ const AlertaList = () => {
                 </span>
               </div>
 
-              {/* Descripción */}
+              <p className="text-xs text-gray-500 mb-2">
+                {alerta.tipo_alerta.replace(/_/g, " ")}
+              </p>
+
               <p className="text-sm text-gray-900 mb-3 bg-gray-50 p-2 rounded">
                 {alerta.descripcion}
               </p>
 
-              {/* Detalles */}
-              <div className="space-y-2 mb-3 text-sm">
+              <div className="space-y-1 mb-3 text-sm">
                 {alerta.estacion_nombre && (
                   <div className="flex justify-between">
                     <span className="text-gray-500">Estación:</span>
-                    <span className="text-gray-900 font-medium text-right">
+                    <span className="text-gray-900 font-medium">
                       {alerta.estacion_nombre}
-                      <span className="text-xs text-gray-500 ml-1">
-                        ({alerta.estacion_codigo})
-                      </span>
                     </span>
                   </div>
                 )}
@@ -426,12 +352,11 @@ const AlertaList = () => {
                 </div>
               </div>
 
-              {/* Botones de Acción */}
               <div className="flex gap-2">
                 {alerta.estado === "pendiente" && (
                   <button
                     onClick={() => handleAtender(alerta.id_alerta)}
-                    className="flex-1 bg-blue-50 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition"
+                    className="flex-1 bg-blue-50 text-blue-600 px-3 py-2 rounded-lg text-sm font-medium hover:bg-blue-100"
                   >
                     Atender
                   </button>
@@ -441,13 +366,13 @@ const AlertaList = () => {
                   <>
                     <button
                       onClick={() => handleResolver(alerta.id_alerta)}
-                      className="flex-1 bg-green-50 text-green-600 px-3 py-2 rounded-lg text-sm font-medium hover:bg-green-100 transition"
+                      className="flex-1 bg-green-50 text-green-600 px-3 py-2 rounded-lg text-sm font-medium hover:bg-green-100"
                     >
                       Resolver
                     </button>
                     <button
                       onClick={() => handleCancelar(alerta.id_alerta)}
-                      className="flex-1 bg-red-50 text-red-600 px-3 py-2 rounded-lg text-sm font-medium hover:bg-red-100 transition"
+                      className="flex-1 bg-red-50 text-red-600 px-3 py-2 rounded-lg text-sm font-medium hover:bg-red-100"
                     >
                       Cancelar
                     </button>
@@ -458,13 +383,26 @@ const AlertaList = () => {
           ))}
         </div>
 
-        {/* Sin alertas */}
         {alertas.length === 0 && (
-          <div className="text-center py-12 px-4">
-            <div className="text-6xl mb-4">✅</div>
-            <h3 className="text-lg font-medium text-gray-900">Todo en orden</h3>
-            <p className="mt-1 text-sm text-gray-500">
-              No hay alertas activas en este momento
+          <div className="text-center py-12">
+            <div className="text-gray-400 mb-2">
+              <svg
+                className="mx-auto h-12 w-12"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900">Sin alertas</h3>
+            <p className="text-sm text-gray-500 mt-1">
+              No hay alertas pendientes
             </p>
           </div>
         )}

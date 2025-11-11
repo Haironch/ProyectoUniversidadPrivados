@@ -163,17 +163,8 @@ const LoginPage = ({ onLoginSuccess }) => {
             {/* Credenciales de prueba */}
             <div className="mt-8 pt-6 border-t border-gray-200">
               <p className="text-xs text-gray-500 text-center mb-2">
-                Credenciales de prueba:
+                Proyecto de Privados Universidad Mariano Gálvez
               </p>
-              <div className="bg-gray-50 rounded-lg p-3 text-xs font-mono text-gray-600 text-center space-y-1">
-                <div>
-                  {/* <span className="font-semibold">Usuario:</span> admin */}
-                </div>
-                <div>
-                  <span className="font-semibold">Contraseña:</span>{" "}
-                  transmetro--2025
-                </div>
-              </div>
             </div>
           </div>
         </div>
